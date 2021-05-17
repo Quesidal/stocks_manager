@@ -1,0 +1,23 @@
+image: python:latest
+
+stages:
+  - test
+  - deploy
+
+
+test:
+  stage: test
+  before_script:
+    - pip3 install -r requirements.txt
+  script:
+    - python -m unittest discover
+
+deploy:
+  stage: deploy
+  before_script:
+    - apt-get update -qy
+    - apt-get install -y ruby-dev
+    - gem install dpl
+  script:
+    - dpl --provider=heroku --app=$HEROKU_APP_NAME --api-key=$HEROKU_API_KEY
+  when: manual
